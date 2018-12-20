@@ -50,7 +50,7 @@ async def on_message(message):
 
     elif message.content.startswith('!comeon'):
         channel = message.author.voice.channel
-        if channel.guild.voice_client:
+        if message.guild.voice_client:
             voice_client = channel.guild.voice_client
             await voice_client.move_to(channel)
         else:
@@ -59,26 +59,19 @@ async def on_message(message):
         await message.channel.send('Oh yeah? I\'ll kick your ass!')
 
     elif message.content.startswith('!fuckyou'):
-        channel = message.author.voice.channel
-        if channel.guild.voice_client:
-            voice_client = channel.guild.voice_client
-            await message.channel.send(
-                'Oh, fuck you leather man.'
-            )
-            await voice_client.disconnect()
+        if message.guild.voice_client:
+            await message.guild.voice_client.disconnect()
+            await message.channel.send('Oh, fuck you leather man.')
 
     elif message.content.startswith('!takeitboy'):
-        channel = message.author.voice.channel
-        if channel != channel.guild.afk_channel:
-            voice_client = channel.guild.voice_client
-            await voice_client.move_to(channel.guild.afk_channel)
+        voice_client = message.guild.voice_client
+        if voice_client and voice_client.channel != message.guild.afk_channel:
+            await voice_client.move_to(message.guild.afk_channel)
 
     elif message.content.startswith('!gachi'):
-        channel = message.author.voice.channel
-        if channel.guild.voice_client:
-            voice_client = channel.guild.voice_client
-        else:
-            voice_client = await channel.connect()
+        voice_client = message.guild.voice_client
+        if voice_client is None:
+            voice_client = await message.author.voice.channel.connect()
 
         if voice_client.is_playing():
             voice_client.stop()
@@ -92,8 +85,8 @@ async def on_message(message):
             )
             audio_url = info['formats'][0]['url']
 
-            await message.channel.send('Now playing: {}'.format(song['title']))
-            voice_client.play(discord.FFmpegPCMAudio(audio_url))
+        await message.channel.send('Now playing: {}'.format(song['title']))
+        voice_client.play(discord.FFmpegPCMAudio(audio_url))
 
 
 client.run(os.environ['GACHIBOT_TOKEN'])
