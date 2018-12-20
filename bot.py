@@ -6,6 +6,7 @@ import youtube_dl
 
 """
 !comeon - move to current channel
+!fuckyou - disconnect
 !gachi - stop current song, play random gachi
 !takeitboy - move to parasha
 """
@@ -45,6 +46,12 @@ async def on_message(message):
             await channel.connect()
 
         await message.channel.send('Thank you sir!')
+
+    elif message.content.startswith('!fuckyou'):
+        channel = message.author.voice.channel
+        if channel.guild.voice_client:
+            voice_client = channel.guild.voice_client
+            await voice_client.disconnect()
 
     elif message.content.startswith('!takeitboy'):
         channel = message.author.voice.channel
