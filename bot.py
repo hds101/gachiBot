@@ -34,8 +34,14 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('!hello'):
-        await message.channel.send('Hello!')
+    if message.content.startswith('!help'):
+        await message.channel.send(
+            "\n" +
+            "!comeon - move to current channel\n" +
+            "!gachi - stop current song, play random gachi\n" +
+            "!takeitboy - move to parasha\n" +
+            "!fuckyou - disconnect"
+        )
 
     elif message.content.startswith('!comeon'):
         channel = message.author.voice.channel
@@ -45,12 +51,16 @@ async def on_message(message):
         else:
             await channel.connect()
 
-        await message.channel.send('Thank you sir!')
+        await message.channel.send('Oh yeah? I\'ll kick your ass!')
 
     elif message.content.startswith('!fuckyou'):
         channel = message.author.voice.channel
         if channel.guild.voice_client:
             voice_client = channel.guild.voice_client
+            await message.channel.send(
+                'Oh, fuck you leather man. Maybe you and I should settle' +
+                'it right here on the ring if you think you\'re so tough.'
+            )
             await voice_client.disconnect()
 
     elif message.content.startswith('!takeitboy'):
