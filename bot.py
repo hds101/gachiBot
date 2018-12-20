@@ -44,6 +44,10 @@ async def on_message(message):
             "```"
         )
 
+    elif message.content.startswith('<!'):
+        sosna = message.guild.get_member('0014')
+        await message.channel.send('{}, https://github.com/Vitalyii/JS/commit/780f5440e2114ec86872bff991082d2a88deb39a'.format(sosna.mention))
+
     elif message.content.startswith('!comeon'):
         channel = message.author.voice.channel
         if channel.guild.voice_client:
