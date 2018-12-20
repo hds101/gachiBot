@@ -36,11 +36,12 @@ async def on_message(message):
 
     if message.content.startswith('!help'):
         await message.channel.send(
-            "\n" +
+            "```" +
             "!comeon - move to current channel\n" +
             "!gachi - stop current song, play random gachi\n" +
             "!takeitboy - move to parasha\n" +
-            "!fuckyou - disconnect"
+            "!fuckyou - disconnect" +
+            "```"
         )
 
     elif message.content.startswith('!comeon'):
@@ -58,8 +59,7 @@ async def on_message(message):
         if channel.guild.voice_client:
             voice_client = channel.guild.voice_client
             await message.channel.send(
-                'Oh, fuck you leather man. Maybe you and I should settle' +
-                'it right here on the ring if you think you\'re so tough.'
+                'Oh, fuck you leather man.'
             )
             await voice_client.disconnect()
 
