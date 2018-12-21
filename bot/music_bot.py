@@ -27,7 +27,7 @@ class MusicBot:
 
     @commands.command()
     async def gachi(self, ctx):
-        """ Streams from a json list """
+        """ Plays a song from the gachi list """
 
         async with ctx.typing():
             song = random.SystemRandom().choice(songs)
@@ -39,7 +39,7 @@ class MusicBot:
 
     @commands.command()
     async def yt(self, ctx, *, url):
-        """ Streams from a url / search """
+        """ Play from the given url / search for a song """
 
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
