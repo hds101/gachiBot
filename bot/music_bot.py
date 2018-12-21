@@ -1,0 +1,76 @@
+import discord
+import json
+import random
+
+from discord.ext import commands
+from .ytdl import YTDLSource
+
+with open('song_list.json') as json_data:
+    songs = json.load(json_data)
+
+
+class MusicBot:
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def comeon(self, ctx, *, channel: discord.VoiceChannel=None):
+        """ Joins a voice channel """
+
+        if channel is None:
+            return await self.ensure_voice(ctx)
+
+        if ctx.voice_client is not None:
+            return await ctx.voice_client.move_to(channel)
+
+        await channel.connect()
+
+    @commands.command()
+    async def gachi(self, ctx):
+        """ Streams from a json list """
+
+        async with ctx.typing():
+            song = random.SystemRandom().choice(songs)
+            url = 'https://www.youtube.com/watch?v={}'.format(song['url'])
+            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
+            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+
+        await ctx.send('Now playing: {}'.format(player.title))
+
+    @commands.command()
+    async def yt(self, ctx, *, url):
+        """ Streams from a url / search """
+
+        async with ctx.typing():
+            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
+            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+
+        await ctx.send('Now playing: {}'.format(player.title))
+
+    @commands.command()
+    async def volume(self, ctx, volume: int):
+        """Changes the player's volume (default is 50)"""
+
+        if ctx.voice_client is None:
+            return await ctx.send("Not connected to a voice channel.")
+
+        ctx.voice_client.source.volume = volume
+        await ctx.send("Changed volume to {}%".format(volume))
+
+    @commands.command()
+    async def fuckyou(self, ctx):
+        """Stops and disconnects the bot from voice"""
+
+        await ctx.voice_client.disconnect()
+
+    @gachi.before_invoke
+    @yt.before_invoke
+    async def ensure_voice(self, ctx):
+        if ctx.voice_client is None:
+            if ctx.author.voice:
+                await ctx.author.voice.channel.connect()
+            else:
+                await ctx.send("You are not connected to a voice channel.")
+                raise commands.CommandError("Author not connected to a voice channel.")
+        elif ctx.voice_client.is_playing():
+            ctx.voice_client.stop()
