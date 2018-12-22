@@ -79,6 +79,10 @@ class MusicBot:
     async def fuckyou(self, ctx):
         """Stops and disconnects the bot from voice"""
 
+        sosna = ctx.guild.get_member(188000465550573569)
+        if ctx.author == sosna:
+            return await ctx.send('Oh, fuck you leather man')
+
         await ctx.voice_client.disconnect()
 
     @gachi.before_invoke
