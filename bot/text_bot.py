@@ -17,6 +17,10 @@ class TextBot:
         await self.__last_commit(ctx, 'Vitalyii', 'JS')
 
     @commands.command()
+    async def gachibot(self, ctx):
+        await self.__last_commit(ctx, 'hds101', 'gachiBot')
+
+    @commands.command()
     async def zaebat(self, ctx):
         """ Zaebat' sosninu """
 
