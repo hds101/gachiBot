@@ -18,13 +18,14 @@ class MusicBot:
     async def comeon(self, ctx, *, channel: discord.VoiceChannel=None):
         """ Joins a voice channel """
 
-        if channel is None:
-            return await self.ensure_voice(ctx)
+        if channel is None and ctx.author.voice is None:
+            return await ctx.send("You are not connected to a voice channel.")
 
-        if ctx.voice_client is not None:
-            return await ctx.voice_client.move_to(channel)
-
-        await channel.connect()
+        channel = channel or ctx.author.voice.channel
+        if ctx.voice_client:
+            await ctx.voice_client.move_to(channel)
+        else:
+            await channel.connect()
 
     @commands.command()
     async def gachi(self, ctx):
@@ -77,7 +78,7 @@ class MusicBot:
 
     @commands.command()
     async def fuckyou(self, ctx):
-        """Stops and disconnects the bot from voice"""
+        """ Stops and disconnects the bot from voice """
 
         sosna = ctx.guild.get_member(188000465550573569)
         if ctx.author == sosna:
@@ -87,12 +88,11 @@ class MusicBot:
 
     @gachi.before_invoke
     @yt.before_invoke
-    async def ensure_voice(self, ctx):
+    async def __ensure_voice(self, ctx):
         if ctx.voice_client is None:
             if ctx.author.voice:
                 await ctx.author.voice.channel.connect()
             else:
                 await ctx.send("You are not connected to a voice channel.")
-                raise commands.CommandError("Author not connected to a voice channel.")
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
