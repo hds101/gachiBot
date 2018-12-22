@@ -72,7 +72,7 @@ class MusicBot:
             return await ctx.send("Not connected to a voice channel.")
 
         self.volume_lvl = volume / 100
-        ctx.voice_client.source.volume = self.volume
+        ctx.voice_client.source.volume = self.volume_lvl
         await ctx.send("Changed volume to {}%".format(volume))
 
     @commands.command()
