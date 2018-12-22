@@ -49,12 +49,13 @@ class MusicBot:
 
     @commands.command()
     async def volume(self, ctx, volume: int):
-        """Changes the player's volume (default is 50)"""
+        """Changes the player's volume (default is 0.5)"""
 
         if ctx.voice_client is None:
             return await ctx.send("Not connected to a voice channel.")
 
-        ctx.voice_client.source.volume = volume
+        flt_volume = volume / 100
+        ctx.voice_client.source.volume = flt_volume
         await ctx.send("Changed volume to {}%".format(volume))
 
     @commands.command()
