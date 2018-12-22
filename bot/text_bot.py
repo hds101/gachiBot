@@ -46,15 +46,16 @@ class TextBot:
     async def __last_commit(self, ctx, author, repo):
         async with ctx.typing():
             commit = Github(author, repo).commits()[0]
-        date = datetime.datetime.strptime(commit['commit']['committer']['date'],
-                                          "%Y-%m-%dT%H:%M:%SZ")
+        d = datetime.datetime.strptime(commit['commit']['committer']['date'],
+                                       "%Y-%m-%dT%H:%M:%SZ")
+        d_ago = (datetime.date.today() - d.date()).days
         message = textwrap.dedent(
             """
            ```
-           Last update: {0}
-           Commit message: {1}
+           Last update: {0} - {1} days ago
+           Commit message: {2}
            ```
-           {2}
+           {3}
            """
-        ).format(date, commit['commit']['message'], commit['html_url'])
+        ).format(d, d_ago, commit['commit']['message'], commit['html_url'])
         await ctx.send(message)
