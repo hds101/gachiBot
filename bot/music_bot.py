@@ -12,6 +12,7 @@ with open('song_list.json') as json_data:
 class MusicBot:
     def __init__(self, bot):
         self.bot = bot
+        self.volume = 0.5
 
     @commands.command()
     async def comeon(self, ctx, *, channel: discord.VoiceChannel=None):
@@ -32,8 +33,16 @@ class MusicBot:
         async with ctx.typing():
             song = random.SystemRandom().choice(songs)
             url = 'https://www.youtube.com/watch?v={}'.format(song['url'])
-            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+            player = await YTDLSource.from_url(
+                url,
+                loop=self.bot.loop,
+                stream=True,
+                volume=self.volume
+            )
+            ctx.voice_client.play(
+                player,
+                after=lambda e: print('Player error: %s' % e) if e else None
+            )
 
         await ctx.send('Now playing: {}'.format(player.title))
 
@@ -42,20 +51,28 @@ class MusicBot:
         """ Play from the given url / search for a song """
 
         async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
-            ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
+            player = await YTDLSource.from_url(
+                url,
+                loop=self.bot.loop,
+                stream=True,
+                volume=self.volume
+            )
+            ctx.voice_client.play(
+                player,
+                after=lambda e: print('Player error: %s' % e) if e else None
+            )
 
         await ctx.send('Now playing: {}'.format(player.title))
 
     @commands.command()
     async def volume(self, ctx, volume: int):
-        """Changes the player's volume (default is 0.5)"""
+        """Changes the player's volume """
 
         if ctx.voice_client is None:
             return await ctx.send("Not connected to a voice channel.")
 
-        flt_volume = volume / 100
-        ctx.voice_client.source.volume = flt_volume
+        self.volume = volume / 100
+        ctx.voice_client.source.volume = self.volume
         await ctx.send("Changed volume to {}%".format(volume))
 
     @commands.command()
