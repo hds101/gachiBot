@@ -12,7 +12,7 @@ with open('song_list.json') as json_data:
 class MusicBot:
     def __init__(self, bot):
         self.bot = bot
-        self.volume = 0.5
+        self.volume_lvl = 0.5
 
     @commands.command()
     async def comeon(self, ctx, *, channel: discord.VoiceChannel=None):
@@ -37,7 +37,7 @@ class MusicBot:
                 url,
                 loop=self.bot.loop,
                 stream=True,
-                volume=self.volume
+                volume=self.volume_lvl
             )
             ctx.voice_client.play(
                 player,
@@ -55,7 +55,7 @@ class MusicBot:
                 url,
                 loop=self.bot.loop,
                 stream=True,
-                volume=self.volume
+                volume=self.volume_lvl
             )
             ctx.voice_client.play(
                 player,
@@ -71,7 +71,7 @@ class MusicBot:
         if ctx.voice_client is None:
             return await ctx.send("Not connected to a voice channel.")
 
-        self.volume = volume / 100
+        self.volume_lvl = volume / 100
         ctx.voice_client.source.volume = self.volume
         await ctx.send("Changed volume to {}%".format(volume))
 
