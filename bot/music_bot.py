@@ -70,6 +70,20 @@ class MusicBot:
         )
 
     @commands.command()
+    async def pause(self, ctx):
+        """ Pauses current track """
+
+        if ctx.voice_client and ctx.voice_client.is_playing():
+            ctx.voice_client.pause()
+
+    @commands.command()
+    async def resume(self, ctx):
+        """ Resumes current track """
+
+        if ctx.voice_client and ctx.voice_client.is_paused():
+            ctx.voice_client.resume()
+
+    @commands.command()
     async def volume(self, ctx, volume: int):
         """Changes the player's volume """
 
