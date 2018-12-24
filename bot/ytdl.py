@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import youtube_dl
+import datetime
 
 
 # Suppress noise about console usage from errors
@@ -33,6 +34,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.data = data
 
         self.title = data.get('title')
+        self.time = datetime.timedelta(seconds=data.get('duration'))
         self.url = data.get('url')
 
     @classmethod

@@ -45,7 +45,9 @@ class MusicBot:
                 after=lambda e: print('Player error: %s' % e) if e else None
             )
 
-        await ctx.send('Now playing: {}'.format(player.title))
+        await ctx.send(
+            'Now playing: {0} [{1}]'.format(player.title, player.time)
+        )
 
     @commands.command()
     async def yt(self, ctx, *, url):
@@ -63,7 +65,9 @@ class MusicBot:
                 after=lambda e: print('Player error: %s' % e) if e else None
             )
 
-        await ctx.send('Now playing: {}'.format(player.title))
+        await ctx.send(
+            'Now playing: {0} [{1}]'.format(player.title, player.time)
+        )
 
     @commands.command()
     async def volume(self, ctx, volume: int):
