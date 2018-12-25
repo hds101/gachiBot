@@ -5,14 +5,14 @@ import random
 from discord.ext import commands
 from .ytdl import YTDLSource
 
-with open('song_list.json') as json_data:
-    songs = json.load(json_data)
-
 
 class MusicBot:
     def __init__(self, bot):
         self.bot = bot
         self.volume_lvl = 0.5
+
+        with open('song_list.json') as json_data:
+            self.gachi_list = json.load(json_data)
 
     @commands.command()
     async def comeon(self, ctx, *, channel: discord.VoiceChannel=None):
@@ -31,43 +31,15 @@ class MusicBot:
     async def gachi(self, ctx):
         """ Plays a song from the gachi list """
 
-        async with ctx.typing():
-            song = random.SystemRandom().choice(songs)
-            url = 'https://www.youtube.com/watch?v={}'.format(song['url'])
-            player = await YTDLSource.from_url(
-                url,
-                loop=self.bot.loop,
-                stream=True,
-                volume=self.volume_lvl
-            )
-            ctx.voice_client.play(
-                player,
-                after=lambda e: print('Player error: %s' % e) if e else None
-            )
-
-        await ctx.send(
-            'Now playing: {0} [{1}]'.format(player.title, player.time)
-        )
+        song = random.choice(self.gachi_list)
+        url = 'https://www.youtube.com/watch?v={}'.format(song['url'])
+        await self.__yt(ctx, url)
 
     @commands.command()
     async def yt(self, ctx, *, url):
         """ Play from the given url / search for a song """
 
-        async with ctx.typing():
-            player = await YTDLSource.from_url(
-                url,
-                loop=self.bot.loop,
-                stream=True,
-                volume=self.volume_lvl
-            )
-            ctx.voice_client.play(
-                player,
-                after=lambda e: print('Player error: %s' % e) if e else None
-            )
-
-        await ctx.send(
-            'Now playing: {0} [{1}]'.format(player.title, player.time)
-        )
+        await self.__yt(ctx, url)
 
     @commands.command()
     async def pause(self, ctx):
@@ -114,3 +86,21 @@ class MusicBot:
                 await ctx.send("You are not connected to a voice channel.")
         elif ctx.voice_client.is_playing():
             ctx.voice_client.stop()
+
+    async def __yt(self, ctx, url, silent=False):
+        async with ctx.typing():
+            player = await YTDLSource.from_url(
+                url,
+                loop=self.bot.loop,
+                stream=True,
+                volume=self.volume_lvl
+            )
+            ctx.voice_client.play(
+                player,
+                after=lambda e: print('Player error: %s' % e) if e else None
+            )
+
+        if not silent:
+            await ctx.send(
+                'Now playing: {0} [{1}]'.format(player.title, player.time)
+            )
