@@ -4,7 +4,7 @@ from discord.ext import commands
 from .github import Github
 
 
-class TextBot:
+class TextBot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

@@ -6,7 +6,7 @@ from discord.ext import commands
 from .ytdl import YTDLSource
 
 
-class MusicBot:
+class MusicBot(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.volume_lvl = 0.5
