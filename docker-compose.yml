@@ -1,0 +1,8 @@
+version: '3.1'
+services:
+  bot:
+    build: .
+    environment:
+      - GACHIBOT_TOKEN
+    volumes:
+      - .:/code
