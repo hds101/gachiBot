@@ -85,6 +85,7 @@ class MusicBot(commands.Cog):
 
     @gachi.before_invoke
     @yt.before_invoke
+    @rv.before_invoke
     async def __ensure_voice(self, ctx):
         if ctx.voice_client is None:
             if ctx.author.voice:
