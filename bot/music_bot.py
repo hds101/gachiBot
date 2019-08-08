@@ -45,7 +45,8 @@ class MusicBot(commands.Cog):
     async def rv(self, ctx, *, url):
         """ Always right version """
 
-        await self.__yt(ctx, "{} right version".format(url))
+        rv_url = "{} right version".format(url)
+        await self.__yt(ctx, rv_url)
 
     @commands.command()
     async def pause(self, ctx):
