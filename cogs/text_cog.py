@@ -1,10 +1,11 @@
 import textwrap
 import datetime
+
 from discord.ext import commands
-from .github import Github
+from lib.github import Github
 
 
-class TextBot(commands.Cog):
+class TextCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

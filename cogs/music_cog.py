@@ -3,15 +3,15 @@ import json
 import random
 
 from discord.ext import commands
-from .ytdl import YTDLSource
+from lib.youtube import YTDLSource
 
 
-class MusicBot(commands.Cog):
+class MusicCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.volume_lvl = 0.5
 
-        with open('song_list.json') as json_data:
+        with open('assets/song_list.json') as json_data:
             self.gachi_list = json.load(json_data)
 
     @commands.command()
