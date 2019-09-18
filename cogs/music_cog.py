@@ -15,19 +15,6 @@ class MusicCog(commands.Cog):
             self.gachi_list = json.load(json_data)
 
     @commands.command()
-    async def comeon(self, ctx, *, channel: discord.VoiceChannel=None):
-        """ Joins a voice channel """
-
-        if channel is None and ctx.author.voice is None:
-            return await ctx.send("You are not connected to a voice channel.")
-
-        channel = channel or ctx.author.voice.channel
-        if ctx.voice_client:
-            await ctx.voice_client.move_to(channel)
-        else:
-            await channel.connect()
-
-    @commands.command()
     async def gachi(self, ctx):
         """ Plays a song from the gachi list """
 
@@ -87,13 +74,16 @@ class MusicCog(commands.Cog):
     @yt.before_invoke
     @rv.before_invoke
     async def __ensure_voice(self, ctx):
-        if ctx.voice_client is None:
-            if ctx.author.voice:
-                await ctx.author.voice.channel.connect()
+        channel = ctx.author.voice.channel
+        if ctx.author.voice.channel is None:
+            await ctx.send("You are not connected to a voice channel.")
+        else:
+            if ctx.voice_client:
+                if ctx.voice_client.is_playing():
+                    ctx.voice_client.stop()
+                await ctx.voice_client.move_to(channel)
             else:
-                await ctx.send("You are not connected to a voice channel.")
-        elif ctx.voice_client.is_playing():
-            ctx.voice_client.stop()
+                await channel.connect(reconnect=True)
 
     async def __yt(self, ctx, url, silent=False):
         async with ctx.typing():
