@@ -1,5 +1,6 @@
 import textwrap
 import datetime
+from time import sleep
 
 from discord.ext import commands
 from lib.github import Github
@@ -26,7 +27,9 @@ class TextCog(commands.Cog):
         """ Zaebat' sosninu """
 
         sosna = ctx.guild.get_member(188000465550573569)
-        await ctx.send('И охуенен 👉 {}'.format(sosna.mention))
+        for i in range(3):
+            await ctx.send('👉 {}'.format(sosna.mention))
+            sleep(2)
 
     @commands.command()
     async def pubg(self, ctx):
