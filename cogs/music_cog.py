@@ -75,17 +75,20 @@ class MusicCog(commands.Cog):
     @rv.before_invoke
     async def __ensure_voice(self, ctx):
         if ctx.author.voice is None:
-            await ctx.send("You are not connected to a voice channel.")
-        else:
-            channel = ctx.author.voice.channel
-            if ctx.voice_client:
-                if ctx.voice_client.is_playing():
-                    ctx.voice_client.stop()
-                await ctx.voice_client.move_to(channel)
-            else:
-                await channel.connect(reconnect=True)
+            return await ctx.send("You are not connected to a voice channel.")
+
+        channel = ctx.author.voice.channel
+        if ctx.voice_client:
+            if ctx.voice_client.is_playing():
+                ctx.voice_client.stop()
+            return await ctx.voice_client.move_to(channel)
+
+        await channel.connect(reconnect=True)
 
     async def __yt(self, ctx, url, silent=False):
+        if ctx.voice_client is None:
+            return
+
         async with ctx.typing():
             player = await YTDLSource.from_url(
                 url,
