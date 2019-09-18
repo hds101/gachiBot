@@ -74,10 +74,10 @@ class MusicCog(commands.Cog):
     @yt.before_invoke
     @rv.before_invoke
     async def __ensure_voice(self, ctx):
-        channel = ctx.author.voice.channel
-        if ctx.author.voice.channel is None:
+        if ctx.author.voice is None:
             await ctx.send("You are not connected to a voice channel.")
         else:
+            channel = ctx.author.voice.channel
             if ctx.voice_client:
                 if ctx.voice_client.is_playing():
                     ctx.voice_client.stop()
