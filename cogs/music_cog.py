@@ -1,7 +1,5 @@
-import discord
 import json
 import random
-
 from discord.ext import commands
 from lib.youtube import YTDLSource
 

@@ -16,3 +16,11 @@ class EventCog(commands.Cog):
 
         await channel.send(file=discord.File('assets/welcome.jpg'))
         await channel.send('Welcome to the club, buddy!')
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author == self.bot.user:
+            return
+        if '<:gav:485168219926167555>' in message.content:
+            gav = self.bot.get_emoji(485168219926167555)
+            await message.channel.send('{0} {0} {0}'.format(gav))
