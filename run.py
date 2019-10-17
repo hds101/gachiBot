@@ -8,7 +8,7 @@ from cogs.event_cog import EventCog
 
 
 if not discord.opus.is_loaded():
-    discord.opus.load_opus('opus')
+    discord.opus.load_opus('libopus.so.0')
 
 bot = commands.Bot(
     command_prefix=commands.when_mentioned_or('!'),

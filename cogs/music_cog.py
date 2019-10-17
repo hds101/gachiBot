@@ -94,12 +94,15 @@ class MusicCog(commands.Cog):
                 stream=False,
                 volume=self.volume_lvl
             )
+
+            current_played = await ctx.send(
+                '>>>Now playing: {0} [{1}]'.format(player.title, player.time)
+            )
+
             ctx.voice_client.play(
                 player,
-                after=lambda e: print('Player error: %s' % e) if e else None
+                after=lambda e: print('Player error: %s' % e) if e else await ctx.delete(current_played)
             )
 
         if not silent:
-            await ctx.send(
-                'Now playing: {0} [{1}]'.format(player.title, player.time)
-            )
+            current_played
