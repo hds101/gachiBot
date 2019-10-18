@@ -1,6 +1,5 @@
 import json
 import random
-import datetime
 from discord.ext import commands
 from lib.youtube import YTDLSource
 
@@ -98,14 +97,13 @@ class MusicCog(commands.Cog):
 
             songlength = int(player.time.total_seconds())
             current_played = await ctx.send(
-                '>>> Now playing: {0} [{1}]'.format(
-                player.title, player.time),
-                delete_after = songlength
+                f'>>> Now playing: {player.title} [{player.time}]',
+                delete_after=songlength
             )
 
             ctx.voice_client.play(
                 player,
-                after = lambda e: print('Player error: %s' % e) if e else None
+                after=lambda e: print('Player error: %s' % e) if e else None
             )
             await ctx.message.delete()
 
