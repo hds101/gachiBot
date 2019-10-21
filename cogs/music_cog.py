@@ -94,12 +94,18 @@ class MusicCog(commands.Cog):
                 stream=False,
                 volume=self.volume_lvl
             )
+
+            songlength = int(player.time.total_seconds())
+            current_played = await ctx.send(
+                f'>>> Now playing: {player.title} [{player.time}]',
+                delete_after=songlength
+            )
+
             ctx.voice_client.play(
                 player,
                 after=lambda e: print('Player error: %s' % e) if e else None
             )
+            await ctx.message.delete()
 
         if not silent:
-            await ctx.send(
-                'Now playing: {0} [{1}]'.format(player.title, player.time)
-            )
+            current_played
