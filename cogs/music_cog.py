@@ -49,7 +49,7 @@ class MusicCog(commands.Cog):
 
     @commands.command()
     async def volume(self, ctx, volume: int):
-        """Changes the player's volume """
+        """ Changes the player's volume """
 
         if ctx.voice_client is None:
             return await ctx.send("Not connected to a voice channel.")
@@ -83,29 +83,18 @@ class MusicCog(commands.Cog):
 
         await channel.connect(reconnect=True)
 
-    async def __yt(self, ctx, url, silent=False):
+    async def __yt(self, ctx, url):
         if ctx.voice_client is None:
             return
 
         async with ctx.typing():
             player = await YTDLSource.from_url(
-                url,
-                loop=self.bot.loop,
-                stream=False,
-                volume=self.volume_lvl
-            )
-
-            songlength = int(player.time.total_seconds())
-            current_played = await ctx.send(
-                f'>>> Now playing: {player.title} [{player.time}]',
-                delete_after=songlength
-            )
+                url, loop=self.bot.loop, volume=self.volume_lvl)
 
             ctx.voice_client.play(
-                player,
-                after=lambda e: print('Player error: %s' % e) if e else None
-            )
-            await ctx.message.delete()
+                player, after=lambda e: print(e) if e else None)
 
-        if not silent:
-            current_played
+            await ctx.message.delete()
+            await ctx.send(
+                f'>>> Now playing: \n{player.title} [{player.time}]',
+                delete_after=int(player.time.total_seconds()))
