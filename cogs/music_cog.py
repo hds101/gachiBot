@@ -1,5 +1,6 @@
 import json
 import random
+import asyncio
 from discord.ext import commands
 from lib.youtube import YTDLSource
 
@@ -68,6 +69,14 @@ class MusicCog(commands.Cog):
 
         await ctx.voice_client.disconnect()
 
+    @gachi.after_invoke
+    @yt.after_invoke
+    @rv.after_invoke
+    @fuckyou.after_invoke
+    async def _delete_command_message(self, ctx):
+        if ctx.message is not None:
+            await ctx.message.delete()
+
     @gachi.before_invoke
     @yt.before_invoke
     @rv.before_invoke
@@ -91,10 +100,17 @@ class MusicCog(commands.Cog):
             player = await YTDLSource.from_url(
                 url, loop=self.bot.loop, volume=self.volume_lvl)
 
-            ctx.voice_client.play(
-                player, after=lambda e: print(e) if e else None)
+            message = await ctx.send(f'>>> Now playing:'
+                                     f' \n{player.title} [{player.time}]')
 
-            await ctx.message.delete()
-            await ctx.send(
-                f'>>> Now playing: \n{player.title} [{player.time}]',
-                delete_after=int(player.time.total_seconds()))
+        ctx.voice_client.play(
+            player, after=lambda e: self.__yt_after_play(e, message))
+
+    def __yt_after_play(self, _exception, message):
+        loop = self.bot.loop or asyncio.get_event_loop()
+        loop.run_until_complete(self.__yt_delete_msg(message))
+
+    @staticmethod
+    async def __yt_delete_msg(message):
+        if message is not None:
+            await message.delete()
