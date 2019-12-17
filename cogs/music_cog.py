@@ -1,5 +1,6 @@
 import json
 import random
+import asyncio
 from discord.ext import commands
 from lib.youtube import YTDLSource
 
@@ -49,7 +50,7 @@ class MusicCog(commands.Cog):
 
     @commands.command()
     async def volume(self, ctx, volume: int):
-        """Changes the player's volume """
+        """ Changes the player's volume """
 
         if ctx.voice_client is None:
             return await ctx.send("Not connected to a voice channel.")
@@ -68,6 +69,14 @@ class MusicCog(commands.Cog):
 
         await ctx.voice_client.disconnect()
 
+    @gachi.after_invoke
+    @yt.after_invoke
+    @rv.after_invoke
+    @fuckyou.after_invoke
+    async def _delete_command_message(self, ctx):
+        if ctx.message is not None:
+            await ctx.message.delete()
+
     @gachi.before_invoke
     @yt.before_invoke
     @rv.before_invoke
@@ -83,29 +92,25 @@ class MusicCog(commands.Cog):
 
         await channel.connect(reconnect=True)
 
-    async def __yt(self, ctx, url, silent=False):
+    async def __yt(self, ctx, url):
         if ctx.voice_client is None:
             return
 
         async with ctx.typing():
             player = await YTDLSource.from_url(
-                url,
-                loop=self.bot.loop,
-                stream=False,
-                volume=self.volume_lvl
-            )
+                url, loop=self.bot.loop, volume=self.volume_lvl)
 
-            songlength = int(player.time.total_seconds())
-            current_played = await ctx.send(
-                f'>>> Now playing: {player.title} [{player.time}]',
-                delete_after=songlength
-            )
+            message = await ctx.send(f'>>> Now playing:'
+                                     f' \n{player.title} [{player.time}]')
 
-            ctx.voice_client.play(
-                player,
-                after=lambda e: print('Player error: %s' % e) if e else None
-            )
-            await ctx.message.delete()
+        ctx.voice_client.play(
+            player, after=lambda e: self.__yt_after_play(e, message))
 
-        if not silent:
-            current_played
+    def __yt_after_play(self, _exception, message):
+        loop = self.bot.loop or asyncio.get_event_loop()
+        loop.run_until_complete(self.__yt_delete_msg(message))
+
+    @staticmethod
+    async def __yt_delete_msg(message):
+        if message is not None:
+            await message.delete()
