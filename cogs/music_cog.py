@@ -106,11 +106,11 @@ class MusicCog(commands.Cog):
         ctx.voice_client.play(
             player, after=lambda e: self.__yt_after_play(e, message))
 
-    def __yt_after_play(self, _exception, message):
-        loop = self.bot.loop or asyncio.get_event_loop()
-        loop.run_until_complete(self.__yt_delete_msg(message))
+    # def __yt_after_play(self, _exception, message):
+    #     loop = self.bot.loop or asyncio.get_event_loop()
+    #     loop.run_until_complete(self.__yt_delete_msg(message))
 
-    @staticmethod
-    async def __yt_delete_msg(message):
-        if message is not None:
-            await message.delete()
+    # @staticmethod
+    # async def __yt_delete_msg(message):
+    #     if message is not None:
+    #         await message.delete()
