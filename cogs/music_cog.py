@@ -73,6 +73,9 @@ class MusicCog(commands.Cog):
     @yt.after_invoke
     @rv.after_invoke
     @fuckyou.after_invoke
+    @pause.after_invoke
+    @resume.after_invoke
+    @volume.after_invoke
     async def _delete_command_message(self, ctx):
         if ctx.message is not None:
             await ctx.message.delete()
